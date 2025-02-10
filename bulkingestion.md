@@ -31,6 +31,7 @@
 
 ```mermaid
 sequenceDiagram
+    autonumber
     actor U as User
     participant C as Client
     participant B as App
