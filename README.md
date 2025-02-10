@@ -1,4 +1,4 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
+# Climate X
 This project was bootstrapped with Fastify-CLI.
 
 ## Install dependencies
