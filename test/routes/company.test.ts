@@ -5,7 +5,7 @@ import {build} from '../helper'
 test("Company API", async (t) => {
     const app = await build(t)
 
-    await t.test('New company store error when name missing', async (t) => {
+    await t.test('returns 400 when name is missing', async (t) => {
         const res = await app.inject({
             method: "POST",
             url: "/company",
@@ -24,7 +24,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('New company store error when id missing', async (t) => {
+    await t.test('returns 400 when name id missing', async (t) => {
         const res = await app.inject({
             method: "POST",
             url: "/company",
@@ -43,7 +43,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('New company store error with empty body', async (t) => {
+    await t.test('returns 400 when payload is missing', async (t) => {
         const res = await app.inject({
             method: "POST",
             url: "/company",
@@ -59,7 +59,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('New company store error when provided parent id missing', async (t) => {
+    await t.test('returns 400 when parentId does not exist', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             method: "POST",
@@ -75,7 +75,7 @@ test("Company API", async (t) => {
         assert.deepStrictEqual(JSON.parse(res.payload), {error: "Parent company not found"});
     });
 
-    await t.test('New company stored without parent id', async (t) => {
+    await t.test('stores a company without a parent ID', async (t) => {
         const res = await app.inject({
             method: "POST",
             url: "/company",
@@ -91,7 +91,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('New company stored when parent id present', async (t) => {
+    await t.test('stores a company with a valid parent ID', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             method: "POST",
@@ -109,7 +109,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('New company stored when its second child', async (t) => {
+    await t.test('stores a company as the second child', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             method: "POST",
@@ -127,7 +127,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('New company stored when its nested child', async (t) => {
+    await t.test('stores a company as a nested child', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             method: "POST",
@@ -145,7 +145,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('company not found', async (t) => {
+    await t.test('returns 404 for a non-existent company', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             url: '/company/2'
@@ -155,7 +155,7 @@ test("Company API", async (t) => {
         assert.deepStrictEqual(JSON.parse(res.payload), {error: "Company not found"})
     });
 
-    await t.test('company found with parent', async (t) => {
+    await t.test('returns a company with a parent', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             url: '/company/124'
@@ -169,7 +169,7 @@ test("Company API", async (t) => {
         })
     });
 
-    await t.test('company found without parent', async (t) => {
+    await t.test('returns a company without a parent', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             url: '/company/123'
@@ -188,7 +188,7 @@ test("Company API", async (t) => {
         Company: 125
      */
 
-    await t.test('parent company not found', async (t) => {
+    await t.test('returns 404 when querying descendants of a non-existent company', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             url: '/company/2/descendants'
@@ -198,7 +198,7 @@ test("Company API", async (t) => {
         assert.deepStrictEqual(JSON.parse(res.payload), {error: "Company not found"})
     });
 
-    await t.test('no subsidiaries', async (t) => {
+    await t.test('returns an empty array for a company with no subsidiaries', async (t) => {
         const app = await build(t)
         const res = await app.inject({
             url: '/company/125/descendants'
@@ -213,7 +213,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('one leve subsidiaries', async (t) => {
+    await t.test('returns direct subsidiaries of a company', async (t) => {
         const app = await build(t);
         const res = await app.inject({
             url: '/company/124/descendants'
@@ -235,7 +235,7 @@ test("Company API", async (t) => {
         });
     });
 
-    await t.test('two level of subsidiaries', async (t) => {
+    await t.test('returns the full hierarchy of a company', async (t) => {
         const app = await build(t);
         const res = await app.inject({
             url: '/company/123/descendants'
